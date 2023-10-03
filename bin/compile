@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -eu
+
+if:IsSet() {
+  [[ ${!1-x} == x ]] && return 1 || return 0
+}   
+
+export BUILDPACK_DEBUG
+if:IsSet BUILDPACK_DEBUG || BUILDPACK_DEBUG=""
+
+if [ -n "$BUILDPACK_DEBUG" ]; then
+  set -x
+fi
+
+echo "Cloning Matomo image..."
+mkdir matomo
+git clone https://github.com/matomo-org/docker.git matomo
+
+echo -n "Copying buildpack extra plugins... "
+mkdir "$1/plugins"
+mv ./plugins/* "$1/plugins"
+
+echo "Building Matomo image..."
+docker built -t matomo "$1"

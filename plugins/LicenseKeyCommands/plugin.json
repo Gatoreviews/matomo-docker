@@ -1,0 +1,19 @@
+{
+    "name": "LicenseKeyCommands",
+    "description": "Custom commands to manipulate the license key.",
+    "version": "4.0.0",
+    "theme": false,
+    "require": {
+        "piwik": ">=4.0.0-b1,<5.0.0-b1"
+    },
+    "authors": [
+        {
+            "name": "Pix",
+            "email": "jeremy@pix.fr",
+            "homepage": "https://pix.fr"
+        }
+    ],
+    "homepage": "https://matomo.org",
+    "license": "GPL v3+",
+    "keywords": ["php", "database", "tooling"]
+}
