@@ -4,7 +4,7 @@ set -eu
 
 if:IsSet() {
   [[ ${!1-x} == x ]] && return 1 || return 0
-}   
+}
 
 export BUILDPACK_DEBUG
 if:IsSet BUILDPACK_DEBUG || BUILDPACK_DEBUG=""
@@ -13,13 +13,26 @@ if [ -n "$BUILDPACK_DEBUG" ]; then
   set -x
 fi
 
-echo "Cloning Matomo image..."
-mkdir matomo
-git clone https://github.com/matomo-org/docker.git matomo
+MATOMO_DOWNLOADS="$1/downloads"
+MATOMO_ZIP="$MATOMO_DOWNLOADS/matomo.zip"
+MATOMO_URL="https://builds.matomo.org/matomo-latest.zip"
 
-echo -n "Copying buildpack extra plugins... "
-mkdir "$1/plugins"
+mkdir -p "$MATOMO_DOWNLOADS"
+
+echo -n "-----> Downloading Matomo... from $MATOMO_URL to $MATOMO_ZIP... "
+curl -s --retry 3 -o "$MATOMO_ZIP" -L "$MATOMO_URL"
+echo "done"
+
+echo -n "-----> Extracting ZIP... "
+unzip -q "$MATOMO_ZIP" -d "$MATOMO_DOWNLOADS"
+mv "$MATOMO_DOWNLOADS/matomo"/* "$1"
+echo "done"
+
+echo -n "-----> Deleting downloads directory... "
+rm -rf "$MATOMO_DOWNLOADS"
+echo "done"
+
+echo -n "-----> Copying buildpack extra plugins... "
 mv ./plugins/* "$1/plugins"
 
-echo "Building Matomo image..."
-docker built -t matomo "$1"
+echo "done"
